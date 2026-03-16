@@ -2,18 +2,22 @@ import { Request, Response } from 'express';
 import * as authService from '../services/auth.service.js';
 import { catchAsync } from '../utils/catch-async.js';
 
+import env from '../config/env.js';
+
 const setAuthCookies = (res: Response, accessToken: string, refreshToken: string) => {
+  const isProduction = env.NODE_ENV === 'production';
+  
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax', // Use 'none' for cross-site if production, else 'lax'
     maxAge: 15 * 60 * 1000, // 15 mins
   });
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 };
