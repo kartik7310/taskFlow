@@ -1,17 +1,22 @@
-import express, { Request, Response } from 'express';
-import dotenv from 'dotenv';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import authRoutes from './routes/auth.routes.js';
 import taskRoutes from './routes/task.routes.js';
 import { errorHandler, notFound } from './middlewares/error.middleware.js';
-
-dotenv.config();
+import logger from './config/logger.js';
+import env from './config/env.js';
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = env.PORT;
 
 app.use(cors());
 app.use(express.json());
+
+// Request logging middleware
+app.use((req: Request, res: Response, next: NextFunction) => {
+  logger.http(`${req.method} ${req.url}`);
+  next();
+});
 
 app.use('/auth', authRoutes);
 app.use('/tasks', taskRoutes);
@@ -24,5 +29,5 @@ app.use(notFound);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  logger.info(`Server is running on port ${PORT}`);
 });

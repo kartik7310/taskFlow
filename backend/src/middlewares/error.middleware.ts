@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import { ZodError } from 'zod';
 import { ApiError } from '../utils/api-error.js';
+import logger from '../config/logger.js';
+import env from '../config/env.js';
 
 export const errorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
   let { statusCode, message } = err;
@@ -13,10 +15,16 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
     message = message || 'Internal Server Error';
   }
 
+  if (statusCode >= 500) {
+    logger.error(err);
+  } else {
+    logger.warn(`${statusCode} - ${message} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+  }
+
   const response = {
     message,
     ...(err instanceof ZodError ? { error: message } : {}),
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    ...(env.NODE_ENV === 'development' && { stack: err.stack }),
   };
 
   if (err instanceof ZodError) {
