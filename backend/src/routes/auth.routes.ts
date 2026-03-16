@@ -8,11 +8,14 @@ import {
   logoutSchema,
 } from '../schemas/auth.schema.js';
 
+import { authenticate } from '../middlewares/auth.middleware.js';
+
 const router = Router();
 
 router.post('/register', validate(registerSchema), authController.register);
 router.post('/login', validate(loginSchema), authController.login);
 router.post('/refresh', validate(refreshSchema), authController.refresh);
 router.post('/logout', validate(logoutSchema), authController.logout);
+router.get('/me', authenticate, authController.getMe);
 
 export default router;

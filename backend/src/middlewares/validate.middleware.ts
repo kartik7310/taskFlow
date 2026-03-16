@@ -12,10 +12,11 @@ export const validate =
         });
 
         // Update request with validated and transformed data
-        // type assertion to bypass read-only property lints
-        (req as any).body = parsed.body;
-        (req as any).query = parsed.query;
-        (req as any).params = parsed.params;
+        req.body = parsed.body;
+
+        // Use Object.assign to update properties instead of reassigning the getter-only properties
+        if (parsed.query) Object.assign(req.query, parsed.query);
+        if (parsed.params) Object.assign(req.params, parsed.params);
 
         next();
       } catch (error) {

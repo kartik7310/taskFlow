@@ -19,7 +19,22 @@ export const registerUser = async (email: string, password: string) => {
       password: hashedPassword,
     },
   });
-  return user;
+
+  const accessToken = generateAccessToken(user.id);
+  const refreshToken = generateRefreshToken(user.id);
+
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
+
+  await prisma.refreshToken.create({
+    data: {
+      token: refreshToken,
+      userId: user.id,
+      expiresAt: expiresAt,
+    },
+  });
+
+  return { accessToken, refreshToken, user: { id: user.id, email: user.email } };
 };
 
 export const loginUser = async (email: string, password: string) => {
@@ -82,5 +97,37 @@ export const refreshAccessToken = async (refreshToken: string) => {
   }
 
   const newAccessToken = generateAccessToken(tokenData.userId);
-  return { accessToken: newAccessToken };
+  const newRefreshToken = generateRefreshToken(tokenData.userId);
+
+  // Set new refresh token expiry (7 days)
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7);
+
+  // Delete old token and create new one
+  await prisma.refreshToken.delete({
+    where: { token: refreshToken },
+  });
+
+  await prisma.refreshToken.create({
+    data: {
+      token: newRefreshToken,
+      userId: tokenData.userId,
+      expiresAt: expiresAt,
+    },
+  });
+
+  return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+};
+
+export const getUserById = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true },
+  });
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  return user;
 };
