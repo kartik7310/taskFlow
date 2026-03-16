@@ -11,10 +11,9 @@ export const validate =
           params: req.params,
         });
 
-        // Update request with validated and transformed data
         req.body = parsed.body;
 
-        // Use Object.assign to update properties instead of reassigning the getter-only properties
+
         if (parsed.query) Object.assign(req.query, parsed.query);
         if (parsed.params) Object.assign(req.params, parsed.params);
 
