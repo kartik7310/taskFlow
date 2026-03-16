@@ -10,10 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "verbatimModuleSyntax": false,
     "allowJs": true,
-    "resolveJsonModule": true,
-    "types": [
-      "node"
-    ]
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*"
