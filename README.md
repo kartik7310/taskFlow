@@ -32,26 +32,82 @@ TaskFlow is a high-performance, full-stack task management application built wit
 ## 📁 Project Structure
 
 ```text
-/
-├── backend/            # Express.js API
-│   ├── prisma/         # Database schema and migrations
-│   ├── src/
-│   │   ├── config/     # Environment and logger configurations
-│   │   ├── controllers/# Route handlers
-│   │   ├── middlewares/# Auth, error, and validation middlewares
-│   │   ├── routes/     # API route definitions
-│   │   ├── services/   # Business logic
-│   │   └── utils/      # Helper functions (ApiError, catchAsync)
-│   └── tsconfig.json   # TypeScript configuration
-├── frontend/           # Next.js Application
-│   ├── src/
-│   │   ├── app/        # Pages and layouts (App Router)
-│   │   ├── components/ # Reusable UI components
-│   │   ├── context/    # React Context (Auth)
-│   │   ├── lib/        # Utility functions
-│   │   └── services/   # API service layer (Axios)
-│   └── package.json    # Frontend dependencies and scripts
-└── README.md           # Project documentation
+Directory structure:
+└── kartik7310-taskflow/
+    ├── README.md
+    ├── backend/
+    │   ├── package.json
+    │   ├── prisma.config.ts
+    │   ├── tsconfig.json
+    │   ├── prisma/
+    │   │   ├── schema.prisma
+    │   │   └── migrations/
+    │   │       ├── migration_lock.toml
+    │   │       └── 20260315134209_added_modals/
+    │   │           └── migration.sql
+    │   └── src/
+    │       ├── index.ts
+    │       ├── config/
+    │       │   ├── db.ts
+    │       │   ├── env.ts
+    │       │   └── logger.ts
+    │       ├── controllers/
+    │       │   ├── auth.controller.ts
+    │       │   └── task.controller.ts
+    │       ├── middlewares/
+    │       │   ├── auth.middleware.ts
+    │       │   ├── error.middleware.ts
+    │       │   └── validate.middleware.ts
+    │       ├── routes/
+    │       │   ├── auth.routes.ts
+    │       │   └── task.routes.ts
+    │       ├── schemas/
+    │       │   ├── auth.schema.ts
+    │       │   └── task.schema.ts
+    │       ├── services/
+    │       │   ├── auth.service.ts
+    │       │   └── task.service.ts
+    │       └── utils/
+    │           ├── api-error.ts
+    │           ├── catch-async.ts
+    │           └── jwt.ts
+    └── frontend/
+        ├── README.md
+        ├── components.json
+        ├── eslint.config.mjs
+        ├── next.config.ts
+        ├── package.json
+        ├── postcss.config.mjs
+        ├── tsconfig.json
+        └── src/
+            ├── app/
+            │   ├── globals.css
+            │   ├── layout.tsx
+            │   ├── page.tsx
+            │   ├── (auth)/
+            │   │   ├── login/
+            │   │   │   └── page.tsx
+            │   │   └── register/
+            │   │       └── page.tsx
+            │   └── dashboard/
+            │       └── page.tsx
+            ├── components/
+            │   ├── tasks/
+            │   │   └── TaskModal.tsx
+            │   └── ui/
+            │       ├── alert-dialog.tsx
+            │       ├── button.tsx
+            │       └── select.tsx
+            ├── context/
+            │   └── AuthContext.tsx
+            ├── lib/
+            │   └── utils.ts
+            ├── services/
+            │   └── api.service.ts
+            └── types/
+                ├── auth.ts
+                └── task.ts
+
 ```
 
 ## 🏁 Getting Started
