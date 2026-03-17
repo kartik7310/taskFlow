@@ -3,29 +3,12 @@ import * as authService from '../services/auth.service.js';
 import { catchAsync } from '../utils/catch-async.js';
 
 import env from '../config/env.js';
-
-const setAuthCookies = (res: Response, accessToken: string, refreshToken: string) => {
-  const isProduction = env.NODE_ENV === 'production';
-  
-  res.cookie('accessToken', accessToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'none' : 'lax', // Use 'none' for cross-site if production, else 'lax'
-    maxAge: 15 * 60 * 1000, // 15 mins
-  });
-
-  res.cookie('refreshToken', refreshToken, {
-    httpOnly: true,
-    secure: isProduction,
-    sameSite: isProduction ? 'none' : 'lax',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  });
-};
+import { setAuthCookies } from '../utils/cookies.js';
 
 export const register = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const data = await authService.registerUser(email, password);
-  
+
   setAuthCookies(res, data.accessToken, data.refreshToken);
 
   res.status(201).json({
@@ -37,7 +20,7 @@ export const register = catchAsync(async (req: Request, res: Response) => {
 export const login = catchAsync(async (req: Request, res: Response) => {
   const { email, password } = req.body;
   const data = await authService.loginUser(email, password);
-  
+
   setAuthCookies(res, data.accessToken, data.refreshToken);
 
   res.status(200).json({
@@ -62,7 +45,7 @@ export const refresh = catchAsync(async (req: Request, res: Response) => {
   }
 
   const data = await authService.refreshAccessToken(refreshToken);
-  
+
   setAuthCookies(res, data.accessToken, data.refreshToken);
 
   res.status(200).json({
@@ -76,8 +59,15 @@ export const logout = catchAsync(async (req: Request, res: Response) => {
     await authService.logoutUser(refreshToken);
   }
 
-  res.clearCookie('accessToken');
-  res.clearCookie('refreshToken');
+  const isProduction = env.NODE_ENV === 'production';
+  const cookieOptions = {
+    httpOnly: true,
+    secure: isProduction,
+    sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+  };
+
+  res.clearCookie('accessToken', cookieOptions);
+  res.clearCookie('refreshToken', cookieOptions);
 
   res.status(200).json({
     success: true,

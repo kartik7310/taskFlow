@@ -28,6 +28,6 @@ export const refreshSchema = z.object({
 
 export const logoutSchema = z.object({
   cookies: z.object({
-    refreshToken: z.string({ message: 'Refresh token is required' }),
+    refreshToken: z.string().optional(),
   }),
 });

@@ -14,12 +14,21 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+
+    // Skip refresh for auth endpoints to avoid loops
+    const isAuthRoute = originalRequest.url?.includes('/auth/');
+
+    if (error.response?.status === 401 && !originalRequest._retry && !isAuthRoute) {
       originalRequest._retry = true;
       try {
-        await axios.post(`${API_URL}/auth/refresh`, {}, { withCredentials: true });
+        // Use the api instance so baseURL and withCredentials are consistent
+        await api.post('/auth/refresh');
         return api(originalRequest);
       } catch (refreshError) {
+        // Refresh failed — redirect to login
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
         return Promise.reject(refreshError);
       }
     }
