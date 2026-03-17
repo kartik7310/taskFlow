@@ -59,11 +59,11 @@ export const logout = catchAsync(async (req: Request, res: Response) => {
     await authService.logoutUser(refreshToken);
   }
 
-  const isProduction = env.NODE_ENV === 'production';
+  const isSecure = env.COOKIE_SECURE === "true";
   const cookieOptions = {
     httpOnly: true,
-    secure: isProduction,
-    sameSite: (isProduction ? 'none' : 'lax') as 'none' | 'lax',
+    secure: isSecure,
+    sameSite: (isSecure ? 'none' : 'lax') as 'none' | 'lax',
   };
 
   res.clearCookie('accessToken', cookieOptions);

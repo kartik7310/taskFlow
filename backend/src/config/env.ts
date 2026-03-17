@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const env = {
+  COOKIE_SECURE: process.env.COOKIE_SECURE || "false",
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: parseInt(process.env.PORT || '5000', 10),
   DATABASE_URL: process.env.DATABASE_URL || '',
