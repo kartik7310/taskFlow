@@ -100,15 +100,17 @@ export default function DashboardPage() {
   };
 
   const handleAddTask = async (data: any) => {
-    toast.promise(api.post('/tasks', data), {
-      loading: 'Creating...',
-      success: (res: any) => {
-        setTasks(prev => [res.data, ...prev]);
-        setIsAddModalOpen(false);
-        return 'Task created';
-      },
-      error: 'Creation failed',
-    });
+    try {
+      const res = await toast.promise(api.post('/tasks', data), {
+        loading: 'Creating...',
+        success: 'Task created!',
+        error: 'Creation failed',
+      });
+      setTasks(prev => [res.data.data, ...prev]);
+      setIsAddModalOpen(false);
+    } catch {
+
+    }
   };
 
   const handleEditTask = (task: Task) => {
@@ -118,17 +120,18 @@ export default function DashboardPage() {
 
   const handleUpdateTask = async (data: any) => {
     if (!editingTask) return;
-    
-    toast.promise(api.patch(`/tasks/${editingTask.id}`, data), {
-      loading: 'Updating...',
-      success: (res: any) => {
-        setTasks(prev => prev.map(t => t.id === editingTask.id ? res.data : t));
-        setIsEditModalOpen(false);
-        setEditingTask(undefined);
-        return 'Updated successfully';
-      },
-      error: 'Update failed',
-    });
+    try {
+      const res = await toast.promise(api.patch(`/tasks/${editingTask.id}`, data), {
+        loading: 'Updating...',
+        success: 'Updated successfully!',
+        error: 'Update failed',
+      });
+      setTasks(prev => prev.map(t => t.id === editingTask.id ? res.data.data : t));
+      setIsEditModalOpen(false);
+      setEditingTask(undefined);
+    } catch {
+      // error toast already shown by toast.promise
+    }
   };
 
   return (
@@ -374,7 +377,7 @@ export default function DashboardPage() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction 
+              <AlertDialogAction
                 onClick={confirmDelete}
                 className="bg-rose-600 hover:bg-rose-700 text-white font-medium px-6"
               >
