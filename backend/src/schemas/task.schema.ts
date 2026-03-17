@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const taskStatuses = ['TODO', 'IN_PROGRESS', 'DONE'] as const;
+const taskStatuses = ['TODO', 'IN_PROGRESS', 'COMPLETED'] as const;
 
 export const createTaskSchema = z.object({
   body: z.object({
